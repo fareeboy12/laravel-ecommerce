@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProductsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,15 +14,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
 Route::get('/', function () {
     return view('home');
 });
 
-// route::get('/', [Controller::class, 'index']);
+Route::get('/products', [ProductsController::class, 'getAllProducts']);
+
+Route::get('/product/{name}', [ProductsController::class, 'getSpecificProduct']);
+
+Route::post('/products', [ProductsController::class, 'store'])->name('product.store');
 
 Route::middleware([
     'auth:sanctum',
@@ -31,4 +32,15 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
+});
+
+
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified'
+])->group(function () {
+    Route::get('/add-new-product', function () {
+        return view('layouts.add-new-product');
+    })->name('add-new-product');
 });
