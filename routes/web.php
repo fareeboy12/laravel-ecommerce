@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductsController;
+use App\Http\Controllers\CartController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +24,12 @@ Route::get('/products', [ProductsController::class, 'getAllProducts']);
 Route::get('/product/{name}', [ProductsController::class, 'getSpecificProduct']);
 
 Route::post('/products', [ProductsController::class, 'store'])->name('product.store');
+
+Route::post('/cart/add/{productId}', [CartController::class, 'addToCart'])->name('cart.add');
+
+Route::get('/cart', [CartController::class, 'showCart'])->name('cart.show');
+
+Route::post('/cart/update-quantity', 'CartController@updateQuantity')->name('cart.updateQuantity');
 
 Route::middleware([
     'auth:sanctum',

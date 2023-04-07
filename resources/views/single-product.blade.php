@@ -1,6 +1,13 @@
     @include('header');
 
         <main class="main">
+        @if (session('success'))
+            <div class="container">
+                <div class="bg-success text-white p-3">
+                    {{ session('success') }}
+                </div>
+            </div>
+        @endif
             <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
                 <div class="container d-flex align-items-center">
                     <ol class="breadcrumb">
@@ -55,6 +62,8 @@
                             </div><!-- End .col-md-6 -->
 
                             <div class="col-md-6">
+                                <form method="POST" action="{{ route('cart.add', $product->id) }}">
+                                @csrf
                                 <div class="product-details">
                                     <h1 class="product-title">{{$product->title}}</h1><!-- End .product-title -->
 
@@ -104,12 +113,12 @@
                                     <div class="details-filter-row details-row-size">
                                         <label for="qty">Qty:</label>
                                         <div class="product-details-quantity">
-                                            <input type="number" id="qty" class="form-control" value="1" min="1" max="10" step="1" data-decimals="0" required>
+                                            <input type="number" id="qty" class="form-control" name="qty" value="1" min="1" max="10" step="1" data-decimals="0" required>
                                         </div><!-- End .product-details-quantity -->
                                     </div><!-- End .details-filter-row -->
 
                                     <div class="product-details-action">
-                                        <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
+                                        <button type="submit" class="btn-product btn-cart"><span>add to cart</span></button>
 
                                         <div class="details-action-wrapper">
                                             <a href="#" class="btn-product btn-wishlist" title="Wishlist"><span>Add to Wishlist</span></a>
@@ -134,6 +143,7 @@
                                         </div>
                                     </div><!-- End .product-details-footer -->
                                 </div><!-- End .product-details -->
+                                </form>
                             </div><!-- End .col-md-6 -->
                         </div><!-- End .row -->
                     </div><!-- End .product-details-top -->
