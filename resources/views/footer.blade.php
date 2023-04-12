@@ -554,60 +554,8 @@
     <script src="/assets/js/demos/demo-2.js"></script>
 
     <script>
-        function updateQuantity(cartItemId, quantity) {
-            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+       
 
-            fetch('/cart/update-quantity', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': token
-                },
-                body: JSON.stringify({
-                    cartItemId: cartItemId,
-                    quantity: quantity
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // You can display a success message here or refresh the page to show the updated quantity
-                    console.log(data.message);
-                } else {
-                    // You can display an error message here
-                    console.log(data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        }
-
-
-
-
-        document.addEventListener('DOMContentLoaded', () => {
-        function updateTotal() {
-            const shippingOptions = document.getElementsByName('shipping');
-            let shippingCost = 0;
-
-            for (let i = 0; i < shippingOptions.length; i++) {
-                if (shippingOptions[i].checked) {
-                    shippingCost = parseFloat(shippingOptions[i].dataset.cost);
-                    break;
-                }
-            }
-
-            const subTotal = {{ $subTotal }};
-            const totalAmount = subTotal + shippingCost;
-            document.getElementById('total-amount').innerText = '$' + totalAmount.toFixed(2);
-        }
-
-        const shippingOptions = document.getElementsByName('shipping');
-        for (let i = 0; i < shippingOptions.length; i++) {
-            shippingOptions[i].addEventListener('change', updateTotal);
-        }
-    });
     </script>
 
 </body>

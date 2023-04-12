@@ -35,6 +35,7 @@
     <link rel="stylesheet" href="/assets/css/demos/demo-2.css">
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
+
 </head>
 
 <body>

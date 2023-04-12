@@ -19,7 +19,7 @@
             	<div class="cart">
 	                <div class="container">
 	                	<div class="row">
-                                    @if (!empty($cartItems))
+                            @if (!empty($cartItems))
 	                		<div class="col-lg-9">
 	                			<table class="table table-cart table-mobile">
 									<thead>
@@ -62,7 +62,31 @@
                                                 </div><!-- End .cart-product-quantity -->
                                             </td>
 											<td class="total-col">${{ $item->quantity * $item->product->price }}</td>
-											<td class="remove-col"><button class="btn-remove"><i class="icon-close"></i></button></td>
+											<td class="remove-col"><button class="btn-remove" onclick="removeItem({{ $item->id }})"><i class="icon-close"></i></button></td>
+                                            <script>
+                                                function removeItem(itemId) {
+                                                    if (!confirm('Are you sure you want to remove this item from your cart?')) {
+                                                        return;
+                                                    }
+
+                                                    fetch(`/cart/remove/${itemId}`, {
+                                                        method: 'DELETE',
+                                                        headers: {
+                                                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                                            'Content-Type': 'application/json',
+                                                        },
+                                                    })
+                                                    .then(response => response.json())
+                                                    .then(data => {
+                                                        if (data.success) {
+                                                            location.reload();
+                                                        } else {
+                                                            alert(data.message);
+                                                        }
+                                                    })
+                                                    .catch(error => console.error(error));
+                                                }
+                                            </script>
 										</tr>
                                         @endif
                                         @endforeach
@@ -75,7 +99,7 @@
 			            					<div class="input-group">
 				        						<input type="text" class="form-control" required placeholder="coupon code">
 				        						<div class="input-group-append">
-													<button class="btn btn-outline-primary-2" type="submit"><i class="icon-long-arrow-right"></i></button>
+													<button class="btn btn-outline-primary-2 apply-coupon" type="submit"><i class="icon-long-arrow-right"></i></button>
 												</div><!-- .End .input-group-append -->
 			        						</div><!-- End .input-group -->
 			            				</form>
@@ -147,7 +171,7 @@
 		            			<a href="category.html" class="btn btn-outline-dark-2 btn-block mb-3"><span>CONTINUE SHOPPING</span><i class="icon-refresh"></i></a>
 	                		</aside><!-- End .col-lg-3 -->
                             @else
-                                <div>Your cart is empty</div>
+                                <div class="col-12">Your cart is empty</div>
                             @endif
 	                	</div><!-- End .row -->
 	                </div><!-- End .container -->
