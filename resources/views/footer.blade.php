@@ -550,13 +550,9 @@
     <script src="/assets/js/jquery.magnific-popup.min.js"></script>
     <script src="/assets/js/jquery.countdown.min.js"></script>
     <!-- Main JS File -->
-    <script src="/assets/js/main.js"></script>
+    <script src="{{ asset('assets/main.js') }}"></script>
     <script src="/assets/js/demos/demo-2.js"></script>
-
-    <script>
-       
-
-    </script>
+    
 
 </body>
 

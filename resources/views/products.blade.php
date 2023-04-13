@@ -84,6 +84,7 @@
                 				</div><!-- End .toolbox-right -->
                 			</div><!-- End .toolbox -->
 
+							<div class="bg-success text-white my-4 p-2" id="success-message">Product Added to Cart.</div>
                             <div class="products mb-3">
                                 @foreach($products as $product)
                                 @php
@@ -117,7 +118,7 @@
                                                     <a href="#" class="btn-product btn-compare" title="Compare"><span>compare</span></a>
                                                 </div><!-- End .product-action -->
 
-                                                <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
+												<button class="btn-product btn-cart w-100" data-product-id="{{ $product->id }}"><span>Add to Cart</span></button>
                                             </div><!-- End .product-list-action -->
                                         </div><!-- End .col-sm-6 col-lg-3 -->
 
