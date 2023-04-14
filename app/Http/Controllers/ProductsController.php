@@ -28,11 +28,6 @@ class ProductsController extends Controller
         return view('single-product', compact('product'));
     }
 
-    public function addNewProduct()
-    {
-        
-    }
-
     /**
      * Show the form for creating a new resource.
      */
@@ -56,9 +51,22 @@ class ProductsController extends Controller
         $product->brand = $request->input('product_brand');
         $product->upsell_items = $request->input('upsell_items');
         $product->crosssell_items = $request->input('crosssell_items');
-        // $product->thumbnail = $request->input('featured_image');
-        // $product->gallery_images = $request->input('gallery_images');
-        // Add any other fields you want to save here
+        
+        // Generate slug from title
+        $slug = strtolower(preg_replace('/[^A-Za-z0-9-]+/', '-', $request->input('product_title')));
+
+        // Check if slug already exists and add number suffix if necessary
+        $existingSlugs = Products::where('slug', 'like', $slug.'%')->pluck('slug');
+        if ($existingSlugs->contains($slug)) {
+            $suffix = 1;
+            do {
+                $newSlug = $slug . '-' . $suffix++;
+            } while ($existingSlugs->contains($newSlug));
+            $slug = $newSlug;
+        }
+
+        // Save slug
+        $product->slug = $slug;
     
         
         // Handle featured image upload

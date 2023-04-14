@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
-use App\Models\Order;
-use App\Models\OrderItem;
+use App\Models\Coupon;
 use App\Repositories\CartRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -83,4 +82,37 @@ class CheckoutController extends Controller
 
         return redirect('/thank-you')->with('success', 'Your order has been placed successfully!');
     }
+
+    public function applyCoupon(Request $request)
+    {
+        $couponCode = $request->input('coupon_code');
+        $coupon = Coupon::where('coupon_code', $couponCode)->first();
+    
+        if (!$coupon) {
+            return redirect()->back()->with('error', 'Invalid coupon code');
+        }
+    
+        // Get the current user's ID (assuming you're using the default authentication)
+        $userId = auth()->id();
+    
+        // Get the current user's cart
+        $cartDetails = $this->cartRepository->showCart($userId);
+    
+        if (!$cartDetails['cartItems']->count()) {
+            return redirect()->back()->with('error', 'Cart not found');
+        }
+    
+        $cartItems = $cartDetails['cartItems'];
+    
+        // Apply the coupon to all items in the cart
+        foreach ($cartItems as $cartItem) {
+            $cartItem->update([
+                'coupon_code' => $coupon->coupon_code,
+                'coupon_price' => $coupon->coupon_price,
+            ]);
+        }
+    
+        return redirect()->back()->with('success', 'Coupon applied successfully');
+    }
+    
 }

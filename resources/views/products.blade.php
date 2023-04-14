@@ -95,7 +95,7 @@
                                         <div class="col-6 col-lg-3">
                                             <figure class="product-media">
                                                 <span class="product-label label-new">New</span>
-                                                <a href="/product/{{$link}}/">
+                                                <a href="/product/{{$product->slug}}/">
                                                     <img src="{{$product->thumbnail}}" alt="Product image" class="product-image">
                                                 </a>
                                             </figure><!-- End .product-media -->
@@ -128,7 +128,7 @@
                                                 <div class="product-cat">
                                                     <a href="#">Women</a>
                                                 </div><!-- End .product-cat -->
-                                                <h3 class="product-title"><a href="/product/{{$link}}/">{{$product->title}}</a></h3><!-- End .product-title -->
+                                                <h3 class="product-title"><a href="/product/{{$product->slug}}/">{{$product->title}}</a></h3><!-- End .product-title -->
 
                                                 <div class="product-content">
                                                     <p>{{$product->description}}</p>

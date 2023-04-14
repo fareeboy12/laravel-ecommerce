@@ -16,6 +16,7 @@ class CartRepository
             });
 
             $shippingFee = $cartItems->first()->shipping_fee ?? 0;
+            $couponCode = $cartItems->first()->coupon_code ?? "";
             $couponPrice = $cartItems->first()->coupon_price ?? 0;
             $totalPrice = $subTotal + $shippingFee - $couponPrice;
         } else {
@@ -29,6 +30,7 @@ class CartRepository
             'cartItems' => $cartItems,
             'subTotal' => $subTotal,
             'shippingFee' => $shippingFee,
+            'couponCode' => $couponCode,
             'couponPrice' => $couponPrice,
             'totalPrice' => $totalPrice,
         ];

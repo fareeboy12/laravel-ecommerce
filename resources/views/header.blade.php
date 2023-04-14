@@ -76,7 +76,11 @@
                                     </div><!-- End .header-menu -->
                                 </div>
                             </li>
-                            <li><a href="#signin-modal" data-toggle="modal">Sign in / Sign up</a></li>
+                            @if (Auth::check())
+                                <li><a href="{{ route('logout') }}">Logout</a></li>
+                            @else
+                                <li><a href="#signin-modal" data-toggle="modal">Sign in / Sign up</a></li>
+                            @endif
                         </ul>
                     </li>
                 </ul><!-- End .top-menu -->

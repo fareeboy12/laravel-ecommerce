@@ -5,6 +5,7 @@ use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CouponsController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\OrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,17 +36,23 @@ Route::post('/cart/update', [CartController::class, 'updateCart'])->name('update
 Route::delete('/cart/remove/{id}', [CartController::class, 'removeCartItem'])->name('remove-cart-item');
 
 
-
-// Route::post('/apply-coupon', [CartController::class, 'applyCoupon'])->name('apply-coupon');
 Route::get('/coupons/json', [CouponsController::class, 'index'])->name('coupons.index');
 Route::get('/coupons', [CouponsController::class, 'create'])->name('coupons.create');
 Route::post('/coupons', [CouponsController::class, 'store'])->name('coupons.store');
 Route::put('/coupons/{id}', [CouponsController::class, 'update'])->name('coupons.update');
 Route::delete('/coupons/{id}', [CouponsController::class, 'destroy'])->name('coupons.destroy');
 
+//Apply coupon on checkout page
+Route::post('/apply-coupon', [CheckoutController::class, 'applyCoupon'])->name('apply-coupon');
+
 
 // Route::get('/checkout', 'CheckoutController@index')->name('checkout.index');
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
+
+//ORDER ROUTES
+Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+Route::get('/payment/{order}', [OrderController::class, 'showPayment'])->name('payment.show');
+Route::get('/thankyou/{order}', [OrderController::class, 'thankyou'])->name('order.thankyou');
 
 
 Route::middleware([

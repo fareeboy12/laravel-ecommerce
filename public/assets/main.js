@@ -78,7 +78,7 @@ $.ajax({
                 <div class="product">
                     <div class="product-cart-details">
                         <h4 class="product-title">
-                            <a href="/product/${item.product.link}">${item.product.title}</a>
+                            <a href="/product/${item.product.slug}">${item.product.title}</a>
                         </h4>
 
                         <span class="cart-product-info">
@@ -88,7 +88,7 @@ $.ajax({
                     </div><!-- End .product-cart-details -->
 
                     <figure class="product-image-container">
-                        <a href="/product/${item.product.link}" class="product-image">
+                        <a href="/product/${item.product.slug}" class="product-image">
                             <img src="${item.product.thumbnail}" alt="${item.product.title}">
                         </a>
                     </figure>
