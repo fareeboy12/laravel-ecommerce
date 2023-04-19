@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Products;
+use App\Jobs\ProcessCsvUpload;
+use App\Events\ProductsUploadCompleted;
 use Illuminate\Http\Request;
 
 class ProductsController extends Controller
@@ -27,6 +29,29 @@ class ProductsController extends Controller
         $product = Products::where('title', $newTitle)->first();
         return view('single-product', compact('product'));
     }
+
+    public function showBulkUploadForm()
+    {
+        return view('csv-upload-products');
+    }
+
+
+    public function uploadCsv(Request $request)
+    {
+        $request->validate([
+            'csv_file' => 'required|mimes:csv,txt|max:2048',
+        ]);
+    
+        $csvFile = $request->file('csv_file');
+        $storedFilePath = $csvFile->store('csv_uploads'); // Store the file in the 'storage/app/csv_uploads' directory
+    
+        ProcessCsvUpload::dispatch($storedFilePath);
+    
+        return back()->with('success', 'CSV file uploaded and processing started.');
+    }
+    
+    
+
 
     /**
      * Show the form for creating a new resource.

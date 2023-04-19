@@ -40,6 +40,11 @@
             @if($order->coupon_code)
                 <p><b>Coupon ({{ $order->coupon_code }}): -$ {{ $order->coupon_price }}</b></p>
             @endif
+            @if($order->payment_method === 'cash_on_delivery')
+                <p><b>Payment Status: Cash On Delivery ({{ ucwords($order->payment_status) }})</b></p>
+            @elseif($order->payment_method === 'credit_card')
+                <p><b>Payment Status: Credit Card ({{ ucwords($order->payment_status) }})</b></p>
+            @endif
         </div>
         <div class="col-6">
             <p class="text-right"><b>Total: ${{ $order->total }}</b></p>

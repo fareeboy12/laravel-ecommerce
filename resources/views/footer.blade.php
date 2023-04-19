@@ -540,6 +540,7 @@
     </div>
 
     <!-- Plugins JS File -->
+    <script src="https://js.stripe.com/v3/"></script>
     <script src="/assets/js/jquery.min.js"></script>
     <script src="/assets/js/bootstrap.bundle.min.js"></script>
     <script src="/assets/js/jquery.hoverIntent.min.js"></script>
@@ -549,9 +550,14 @@
     <script src="/assets/js/jquery.plugin.min.js"></script>
     <script src="/assets/js/jquery.magnific-popup.min.js"></script>
     <script src="/assets/js/jquery.countdown.min.js"></script>
+    
     <!-- Main JS File -->
+    <script>
+        window.stripePublishableKey = '{{ config('services.stripe.key') }}';
+    </script>
     <script src="{{ asset('assets/main.js') }}"></script>
     <script src="/assets/js/demos/demo-2.js"></script>
+    <!-- @stack('payment-form-script') -->
     
 
 </body>

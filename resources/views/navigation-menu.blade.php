@@ -14,6 +14,10 @@
         </li>
 
         <li class="nav-item">
+            <a class="nav-link" href="{{ route('upload-bulk-products') }}">Upload Bulk Product</a>
+        </li>
+
+        <li class="nav-item">
             <a class="nav-link" href="{{ route('coupons.create') }}">Add Coupon</a>
         </li>
         <li class="nav-item dropdown ml-auto">

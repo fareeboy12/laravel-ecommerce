@@ -58,67 +58,72 @@ jQuery(document).ready(function($) {
 
 
 		//GET CART DATA FOR HEADER
-$.ajax({
-    url: '/cart/data',
-    type: 'GET',
-    dataType: 'json',
-    success: function(data) {
-        let cartCount = 0;
-        let cartTotal = 0;
+		$.ajax({
+			url: '/cart/data',
+			type: 'GET',
+			dataType: 'json',
+			success: function(data) {
+				let cartCount = 0;
+				let cartTotal = 0;
 
-        // Update cart count and total
-        if (data.count > 0) {
-            $('.dropdown-menu-right .dropdown-cart-products').empty();
+				// Update cart count and total
+				if (data.count > 0) {
+					$('.dropdown-menu-right .dropdown-cart-products').empty();
 
-            data.items.forEach(item => {
-                cartCount += item.quantity;
-                cartTotal += item.quantity * item.product.price;
+					data.items.forEach(item => {
+						cartCount += item.quantity;
+						cartTotal += item.quantity * item.product.price;
 
-                $('.dropdown-cart-products').append(`
-                <div class="product">
-                    <div class="product-cart-details">
-                        <h4 class="product-title">
-                            <a href="/product/${item.product.slug}">${item.product.title}</a>
-                        </h4>
+						$('.dropdown-cart-products').append(`
+						<div class="product">
+							<div class="product-cart-details">
+								<h4 class="product-title">
+									<a href="/product/${item.product.slug}">${item.product.title}</a>
+								</h4>
 
-                        <span class="cart-product-info">
-                            <span class="cart-product-qty">${item.quantity}</span>
-                            x $${parseFloat(item.product.price).toFixed(2)}
-                        </span>
-                    </div><!-- End .product-cart-details -->
+								<span class="cart-product-info">
+									<span class="cart-product-qty">${item.quantity}</span>
+									x $${parseFloat(item.product.price).toFixed(2)}
+								</span>
+							</div><!-- End .product-cart-details -->
 
-                    <figure class="product-image-container">
-                        <a href="/product/${item.product.slug}" class="product-image">
-                            <img src="${item.product.thumbnail}" alt="${item.product.title}">
-                        </a>
-                    </figure>
-                    <a href="#" class="btn-remove" title="Remove Product"><i class="icon-close"></i></a>
-                </div>
-                `);
-            });
+							<figure class="product-image-container">
+								<a href="/product/${item.product.slug}" class="product-image">
+									<img src="${item.product.thumbnail}" alt="${item.product.title}">
+								</a>
+							</figure>
+							<a href="#" class="btn-remove" title="Remove Product"><i class="icon-close"></i></a>
+						</div>
+						`);
+					});
 
-            // Hide empty cart message
-            $('.empty-cart-message').hide();
-        } else {
-            $('.products-list').html('');
-			$('.dropdown-cart-total').hide();
-			$('.dropdown-cart-action').hide();
-            $('.dropdown-cart-products').html('');
-            $('.empty-cart-message').show();
-        }
+					// Hide empty cart message
+					$('.empty-cart-message').hide();
+				} else {
+					$('.products-list').html('');
+					$('.dropdown-cart-total').hide();
+					$('.dropdown-cart-action').hide();
+					$('.dropdown-cart-products').html('');
+					$('.empty-cart-message').show();
+				}
 
-        // Update cart dropdown
-        let cartDropdown = $('.cart-dropdown');
-        let cartCountElement = cartDropdown.find('.cart-count');
-        let cartTotalElement = cartDropdown.find('.cart-total-price');
+				// Update cart dropdown
+				let cartDropdown = $('.cart-dropdown');
+				let cartCountElement = cartDropdown.find('.cart-count');
+				let cartTotalElement = cartDropdown.find('.cart-total-price');
 
-        cartCountElement.text(cartCount);
-        cartTotalElement.text('$' + parseFloat(cartTotal).toFixed(2));
-    },
-    error: function(jqXHR, textStatus, errorThrown) {
-        console.log(textStatus + ': ' + errorThrown);
-    }
-});
+				cartCountElement.text(cartCount);
+				cartTotalElement.text('$' + parseFloat(cartTotal).toFixed(2));
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				console.log(textStatus + ': ' + errorThrown);
+			}
+		});
+
+
+
+		//STRIPE
+
 
 		
 

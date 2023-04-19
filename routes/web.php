@@ -6,6 +6,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CouponsController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,6 +28,9 @@ Route::get('/products', [ProductsController::class, 'getAllProducts'])->name('pr
 Route::get('/product/{name}', [ProductsController::class, 'getSpecificProduct']);
 
 Route::post('/products', [ProductsController::class, 'store'])->name('product.store');
+
+Route::get('/upload-products', [ProductsController::class, 'showBulkUploadForm'])->name('upload-products');
+Route::post('/products/upload', [ProductsController::class, 'uploadCsv'])->name('products.upload');
 
 Route::post('/cart/add/{productId}', [CartController::class, 'addToCart'])->name('cart.add');
 
@@ -55,6 +59,12 @@ Route::get('/payment/{order}', [OrderController::class, 'showPayment'])->name('p
 Route::get('/thankyou/{order}', [OrderController::class, 'thankyou'])->name('order.thankyou');
 
 
+// Route::get('/payment/create', [PaymentController::class, 'create'])->name('payment.create');
+Route::get('/payment/{order}', [PaymentController::class, 'show'])->name('payment.show');
+// Route::post('/payment', [PaymentController::class, 'store'])->name('payment.store');
+Route::post('/payment/{order}', [PaymentController::class, 'store'])->name('payment.store');
+
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
@@ -74,4 +84,14 @@ Route::middleware([
     Route::get('/add-new-product', function () {
         return view('layouts.add-new-product');
     })->name('add-new-product');
+});
+
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified'
+])->group(function () {
+    Route::get('/upload-bulk-products', function () {
+        return view('layouts.csv-upload-products');
+    })->name('upload-bulk-products');
 });

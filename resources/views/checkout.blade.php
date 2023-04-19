@@ -125,13 +125,13 @@
 
                                     <div class="accordion-summary" id="accordion-payment">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="payment_method" id="cod" value="Cash On Delivery" checked>
+                                            <input class="form-check-input" type="radio" name="payment_method" id="cod" value="cash_on_delivery" checked>
                                             <label class="form-check-label ml-2" for="cod">
                                                 Cash On Delivery
                                             </label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="payment_method" id="credit_card" value="Credit Card">
+                                            <input class="form-check-input" type="radio" name="payment_method" id="credit_card" value="credit_card">
                                             <label class="form-check-label ml-2" for="credit_card">
                                                 Credit Card
                                             </label>
