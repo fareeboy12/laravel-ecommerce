@@ -22,9 +22,10 @@
                 		<div class="col-lg-9">
                 			<div class="toolbox">
                 				<div class="toolbox-left">
-                					<div class="toolbox-info">
-                						Showing <span>1 of 100</span> Products
-                					</div><!-- End .toolbox-info -->
+								<div class="toolbox-info">
+									Showing <span>{{ ($products->currentPage() - 1) * $products->perPage() + 1 }} to {{ $products->currentPage() * $products->perPage() > $products->total() ? $products->total() : $products->currentPage() * $products->perPage() }}</span> of {{ $products->total() }} Products
+								</div><!-- End .toolbox-info -->
+
                 				</div><!-- End .toolbox-left -->
 
                 				<div class="toolbox-right">
@@ -96,7 +97,7 @@
                                             <figure class="product-media">
                                                 <span class="product-label label-new">New</span>
                                                 <a href="/product/{{$product->slug}}/">
-                                                    <img src="{{$product->thumbnail}}" alt="Product image" class="product-image">
+                                                    <img src="{{ asset('storage/' . $product->thumbnail) }}" alt="{{$product->title}}" class="product-image">
                                                 </a>
                                             </figure><!-- End .product-media -->
                                         </div><!-- End .col-sm-6 col-lg-3 -->
@@ -141,7 +142,7 @@
 												@if($galleryImages)
             										@foreach($galleryImages as $galleryImage)
                                                     <a href="#" class="active">
-                                                        <img src="{{ $galleryImage }}" alt="product desc">
+                                                        <img src="{{ asset('storage/' . $galleryImage) }}" alt="product desc">
                                                     </a>
 													@endforeach
         										@endif
@@ -152,24 +153,34 @@
                                 </div><!-- End .product -->
                                 @endforeach
                             </div><!-- End .products -->
+							<nav aria-label="Page navigation">
+								<ul class="pagination">
+									<li class="page-item {{ $products->onFirstPage() ? 'disabled' : '' }}">
+										<a class="page-link page-link-prev" href="{{ $products->previousPageUrl() }}" aria-label="Previous" tabindex="{{ $products->onFirstPage() ? -1 : 0 }}" aria-disabled="{{ $products->onFirstPage() ? 'true' : 'false' }}">
+											<span aria-hidden="true"><i class="icon-long-arrow-left"></i></span>Prev
+										</a>
+									</li>
 
-                			<nav aria-label="Page navigation">
-							    <ul class="pagination">
-							        <li class="page-item disabled">
-							            <a class="page-link page-link-prev" href="#" aria-label="Previous" tabindex="-1" aria-disabled="true">
-							                <span aria-hidden="true"><i class="icon-long-arrow-left"></i></span>Prev
-							            </a>
-							        </li>
-							        <li class="page-item active" aria-current="page"><a class="page-link" href="#">1</a></li>
-							        <li class="page-item"><a class="page-link" href="#">2</a></li>
-							        <li class="page-item"><a class="page-link" href="#">3</a></li>
-							        <li class="page-item-total">of 6</li>
-							        <li class="page-item">
-							            <a class="page-link page-link-next" href="#" aria-label="Next">
-							                Next <span aria-hidden="true"><i class="icon-long-arrow-right"></i></span>
-							            </a>
-							        </li>
-							    </ul>
+									@foreach ($products->links()->elements as $element)
+										@if (is_string($element))
+											<li class="page-item-total">{{ $element }}</li>
+										@endif
+
+										@if (is_array($element))
+											@foreach ($element as $page => $url)
+												<li class="page-item {{ $page == $products->currentPage() ? 'active' : '' }}" aria-current="{{ $page == $products->currentPage() ? 'page' : '' }}">
+													<a class="page-link" href="{{ $url }}">{{ $page }}</a>
+												</li>
+											@endforeach
+										@endif
+									@endforeach
+
+									<li class="page-item {{ $products->hasMorePages() ? '' : 'disabled' }}">
+										<a class="page-link page-link-next" href="{{ $products->nextPageUrl() }}" aria-label="Next">
+											Next <span aria-hidden="true"><i class="icon-long-arrow-right"></i></span>
+										</a>
+									</li>
+								</ul>
 							</nav>
                 		</div><!-- End .col-lg-9 -->
                 		<aside class="col-lg-3 order-lg-first">

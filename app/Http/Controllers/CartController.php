@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Cart;
 use App\Models\Products;
 use App\Models\Coupon;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 use App\Repositories\CartRepository;
 
@@ -34,13 +36,28 @@ class CartController extends Controller
     public function addToCart(Request $request, $productId)
     {
         $user = Auth::user();
+
+        // Check if the user is not logged in, then create a guest user
+        if ($user === null) {
+            $guestId = (string) Str::uuid();
+            $user = new User();
+            $user->email = Str::uuid() . '@example.com'; // Generate a unique email address
+            $user->password = bcrypt(Str::random(16)); // Generate a random password
+            $user->user_type = "guest";
+            $user->first_name = 'Guest';
+            $user->last_name = $guestId;
+            $user->save();
+
+            Auth::login($user); // Log the guest user in for the current session
+        }
+
         $product = Products::findOrFail($productId);
-        $quantity = $request->input('qty', 1); // Set the default value to 1 if 'qty' is not provided
+        $quantity = $request->input('qty', 1);
         $price = $product->price;
         $total = $price * $quantity;
-    
+
         $cartItem = Cart::where('user_id', $user->id)->where('product_id', $product->id)->first();
-    
+
         if ($cartItem === null) {
             $cartItem = new Cart();
             $cartItem->user_id = $user->id;
@@ -52,45 +69,11 @@ class CartController extends Controller
             $cartItem->quantity += $quantity;
             $cartItem->total = $price * $cartItem->quantity;
         }
-    
-        $cartItem->save();
-    
-        return redirect()->back()->with('success', 'Product added to cart successfully!');
-    }
-    
-    
 
-    // public function showCart()
-    // {
-    //     $user = Auth::user();
-    //     if ($user) {
-    //         $cartItems = Cart::where('user_id', $user->id)->get()->load('product');
-    
-    //         // Calculate subTotal
-    //         if ($cartItems) {
-    //             $subTotal = $cartItems->sum(function($item) {
-    //                 return $item->quantity * $item->product->price;
-    //             });
-    
-    //             $shippingFee = $cartItems->first()->shipping_fee ?? 0;
-    //             $couponPrice = $cartItems->first()->coupon_price ?? 0;
-    //             $totalPrice = $subTotal + $shippingFee - $couponPrice;
-    //         } else {
-    //             $subTotal = 0;
-    //             $shippingFee = 0;
-    //             $couponPrice = 0;
-    //             $totalPrice = 0;
-    //         }
-    
-    //         return view('cart', [
-    //             'cartItems' => $cartItems,
-    //             'subTotal' => $subTotal,
-    //             'shippingFee' => $shippingFee,
-    //             'couponPrice' => $couponPrice,
-    //             'totalPrice' => $totalPrice,
-    //         ]);
-    //     }
-    // }
+        $cartItem->save();
+
+        return redirect()->back()->with('success', 'Product added to cart successfully!');
+    }    
 
     public function getCartData()
     {
@@ -190,14 +173,14 @@ class CartController extends Controller
         }
         return response()->json(['success' => false]);
     }
-    
+
+    public function showCartDetails()
+    {
+        $cartItems = Cart::with(['user', 'product'])->get();
+        return view('layouts.carts', ['cartItems' => $cartItems]);
+    }
     
     
 
-    
-    
-    
-    
-    
-    
+
 }

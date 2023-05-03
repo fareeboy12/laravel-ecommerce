@@ -2,6 +2,58 @@
 $(document).ready(function () {
     'use strict';
 
+
+		//Redirect Orders Page to Single Order page
+        $('#orders-table tbody tr td[data-url]').on('click', function() {
+            var url = $(this).data('url');
+            if (url) {
+                window.location.href = url;
+            }
+        });
+        
+        // Change Order Status for Admin Panel
+        const csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+        $('#orders-table select[name="order_status"]').each(function() {
+            $(this).on('change', function() {
+                console.log("clicked");
+                const closestTd = $(this).closest('tr').find('td[data-url]');
+                const orderId = closestTd.data('url').split('/')[2];
+                const newStatus = $(this).val();
+
+                if (newStatus === null || newStatus === '') {
+                    console.error('Error: newStatus is null or empty');
+                    return;
+                }
+                
+    
+                if (confirm('Are you sure you want to change the order status?')) {
+                    $.ajax({
+                        url: `/update-order-status/${orderId}`,
+                        method: 'POST',
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken
+                        },
+                        data: JSON.stringify({ order_status: newStatus }),
+                        success: function(data) {
+                            console.log(data.message);
+                            location.reload(); // Reload the page
+                        },
+                        error: function(error) {
+                            console.error('Error:', error);
+                        }
+                    });
+                }
+            });
+        });
+        
+        
+        
+        
+        
+
     owlCarousels();
     quantityInputs();
 

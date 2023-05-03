@@ -8,6 +8,7 @@
         <meta name="keywords" content="HTML5 Template">
         <meta name="description" content="Molla - Bootstrap eCommerce Template">
         <meta name="author" content="p-themes">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
         <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/icons/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icons/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/icons/favicon-16x16.png">
@@ -209,7 +210,7 @@
                 `;
             });
 
-            const tableBody = document.querySelector("table > tbody");
+            const tableBody = document.querySelector("#coupons > tbody");
             tableBody.innerHTML = tableRows;
 
             // Reattach event listeners to the edit buttons
@@ -221,71 +222,71 @@
     }
 
     function attachEditButtonListeners() {
-  const editButtons = document.querySelectorAll('.btn-edit');
-  const saveButtons = document.querySelectorAll('.btn-save');
+      const editButtons = document.querySelectorAll('.btn-edit');
+      const saveButtons = document.querySelectorAll('.btn-save');
 
-  editButtons.forEach((btn, index) => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      const row = btn.closest('tr');
-      const inputs = row.querySelectorAll('.edit-input');
+      editButtons.forEach((btn, index) => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const row = btn.closest('tr');
+          const inputs = row.querySelectorAll('.edit-input');
 
-      inputs.forEach(input => {
-        input.removeAttribute('disabled');
-        input.classList.add('editing');
-      });
+          inputs.forEach(input => {
+            input.removeAttribute('disabled');
+            input.classList.add('editing');
+          });
 
-      btn.style.display = 'none';
-      saveButtons[index].style.display = 'inline-block';
-    });
-  });
-
-  saveButtons.forEach((btn, index) => {
-    btn.addEventListener('click', async (e) => {
-      e.preventDefault();
-      const row = btn.closest('tr');
-      const inputs = row.querySelectorAll('.edit-input');
-      const id = row.getAttribute('data-id');
-
-      inputs.forEach(input => {
-        input.setAttribute('disabled', '');
-        input.classList.remove('editing');
-      });
-
-      const couponCode = row.querySelector('input[name="coupon_code"]').value;
-      const couponPrice = row.querySelector('input[name="coupon_price"]').value;
-
-      try {
-        const response = await fetch(`{{ url('/coupons/') }}/${id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': "{{ csrf_token() }}",
-          },
-          body: JSON.stringify({
-            coupon_code: couponCode,
-            coupon_price: couponPrice,
-          }),
+          btn.style.display = 'none';
+          saveButtons[index].style.display = 'inline-block';
         });
+      });
 
-        const data = await response.json();
+      saveButtons.forEach((btn, index) => {
+        btn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          const row = btn.closest('tr');
+          const inputs = row.querySelectorAll('.edit-input');
+          const id = row.getAttribute('data-id');
 
-        if (data.success) {
-          console.log(data.success);
-          fetchCoupons();
-        } else {
-          console.error('Error updating coupon');
-        }
-      } catch (error) {
-        console.error('Error updating coupon:', error);
-      }
+          inputs.forEach(input => {
+            input.setAttribute('disabled', '');
+            input.classList.remove('editing');
+          });
 
-      // Hide save button and display edit button again
-      btn.style.display = 'none';
-      editButtons[index].style.display = 'inline-block';
-    });
-  });
-}
+          const couponCode = row.querySelector('input[name="coupon_code"]').value;
+          const couponPrice = row.querySelector('input[name="coupon_price"]').value;
+
+          try {
+            const response = await fetch(`{{ url('/coupons/') }}/${id}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': "{{ csrf_token() }}",
+              },
+              body: JSON.stringify({
+                coupon_code: couponCode,
+                coupon_price: couponPrice,
+              }),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+              console.log(data.success);
+              fetchCoupons();
+            } else {
+              console.error('Error updating coupon');
+            }
+          } catch (error) {
+            console.error('Error updating coupon:', error);
+          }
+
+          // Hide save button and display edit button again
+          btn.style.display = 'none';
+          editButtons[index].style.display = 'inline-block';
+        });
+      });
+    }
 
 
 

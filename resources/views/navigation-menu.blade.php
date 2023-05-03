@@ -20,15 +20,31 @@
         <li class="nav-item">
             <a class="nav-link" href="{{ route('coupons.create') }}">Add Coupon</a>
         </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('all-orders') }}">All Orders</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('users.index') }}">All Users</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('cart.details') }}">Carts</a>
+        </li>
         <li class="nav-item dropdown ml-auto">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-display="static" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
-                    <button class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition">
-                        <img class="h-8 w-8 rounded-full object-cover" src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}" />
-                    </button>
-                @else
-                {{ Auth::user()->first_name }} {{ Auth::user()->last_name }}
-                @endif
+            @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
+    <button class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition">
+        <img class="h-8 w-8 rounded-full object-cover" src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}" />
+    </button>
+@else
+    @if (Auth::check())
+        {{ Auth::user()->first_name }} {{ Auth::user()->last_name }}
+    @else
+        Guest
+    @endif
+@endif
             </a>
             <div class="dropdown-menu dropdown-menu-lg-right" aria-labelledby="navbarDropdown">
                 <h6 class="dropdown-header">{{ __('Manage Account') }}</h6>

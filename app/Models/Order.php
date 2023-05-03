@@ -27,6 +27,7 @@ class Order extends Model
         'shipping_fee',
         'coupon_price',
         'total',
+        'order_status'
     ];
     
     public function user()

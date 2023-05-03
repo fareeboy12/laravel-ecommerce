@@ -55,7 +55,7 @@ class ProcessCsvUpload implements ShouldQueue
             $uploaded++;
     
             // Insert products in chunks
-            if ($uploaded % 500 == 0 || $uploaded == $numRecords) {
+            if ($uploaded % 100 == 0 || $uploaded == $numRecords) {
                 Products::insert($products);
                 Log::info('CSV chunk processed. Uploaded records: ' . $uploaded . ' / ' . $numRecords);
                 $products = []; // Reset the products array

@@ -13379,10 +13379,10 @@ button:focus {
     margin-top: 0;
   }
 }
-.table td {
+/* .table td {
   padding-top: 3rem;
   padding-bottom: 3rem;
-}
+} */
 .table .price-col {
   width: 180px;
   color: #333;

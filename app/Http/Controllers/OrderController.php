@@ -48,6 +48,7 @@ class OrderController extends Controller
         $order->coupon_price = $cart['couponPrice'];
         $order->total = $cart['totalPrice'];
         $order->payment_status = $request->payment_method === 'credit_card' ? 'pending' : 'to be paid on delivery';
+        $order->order_status = "processing";
         $order->save();
 
         // Insert order items data
@@ -85,6 +86,35 @@ class OrderController extends Controller
     {
         return $this->hasMany(OrderItem::class);
     }
+
+    public function index()
+    {
+        $orders = Order::orderBy('created_at', 'desc')->get();
+        return view('layouts.all-orders', compact('orders'));
+    }
+    
+
+    public function show($id)
+    {
+        $order = Order::with('orderItems.product')->findOrFail($id);
+        return view('layouts.order-details', compact('order'));
+    }
+
+    public function updateOrderStatus(Order $order, Request $request)
+    {
+        $order_status = $request->input('order_status');
+    
+        if ($order_status === null || $order_status === '') {
+            return response()->json(['error' => 'Order status cannot be null or empty'], 400);
+        }
+    
+        $order->order_status = $order_status;
+        $order->save();
+    
+        return response()->json(['message' => 'Order status updated successfully.']);
+    }
+    
+
 
 
 }

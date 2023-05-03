@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Products;
+use App\Models\Wishlist;
 use App\Jobs\ProcessCsvUpload;
 use App\Events\ProductsUploadCompleted;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProductsController extends Controller
 {
@@ -14,20 +16,28 @@ class ProductsController extends Controller
      */
     public function getAllProducts()
     {
-        $products = Products::all();
+        $products = Products::paginate(10);
         return view('products', compact('products'));
     }
+    
 
-    public function getSpecificProduct($title)
+    public function getSpecificProduct($slug)
     {
-        // Replace hyphens with spaces
-        $string = str_replace('-', ' ', $title);
-
-        // Capitalize the first letter of each word
-        $newTitle = ucwords($string);
-
-        $product = Products::where('title', $newTitle)->first();
-        return view('single-product', compact('product'));
+        $product = Products::where('slug', $slug)->first();
+    
+        if (!$product) {
+            // Handle the case when the product is not found, e.g., return a 404 response
+            abort(404);
+        }
+    
+        $user = Auth::user();
+        $wishlist = null;
+    
+        if ($user) {
+            $wishlist = Wishlist::where('user_id', $user->id)->where('product_id', $product->id)->first();
+        }
+    
+        return view('single-product', compact('product', 'wishlist'));
     }
 
     public function showBulkUploadForm()
@@ -123,10 +133,15 @@ class ProductsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Products $products)
+    public function show($id)
     {
-        //
+        $product = Products::findOrFail($id);
+        $user = Auth::user();
+        $wishlist = Wishlist::where('user_id', $user->id)->where('product_id', $id)->first();
+    
+        return view('single-products', compact('product', 'wishlist'));
     }
+    
 
     /**
      * Show the form for editing the specified resource.

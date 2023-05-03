@@ -403,7 +403,7 @@
 
                                         <div class="form-group">
                                             <label for="password">Password *</label>
-                                            <input type="password" class="form-control" id="password" name="singin-password" name="password" required autocomplete="current-password">
+                                            <input type="password" class="form-control" id="password" name="password" required autocomplete="current-password">
                                         </div><!-- End .form-group -->
 
                                         <div class="form-footer">
@@ -554,11 +554,13 @@
     <!-- Main JS File -->
     <script>
         window.stripePublishableKey = '{{ config('services.stripe.key') }}';
+        window.productThumbnailUrl = "{{ asset('storage/') }}";
     </script>
     <script src="{{ asset('assets/main.js') }}"></script>
     <script src="/assets/js/demos/demo-2.js"></script>
     <!-- @stack('payment-form-script') -->
-    
+
+
 
 </body>
 

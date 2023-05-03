@@ -41,7 +41,7 @@
 
     <div class="col-12">
         <h3>All Coupons</h3>
-        <table class="table">
+        <table class="table" id="coupons">
             <thead>
                 <tr>
                 <th scope="col">#</th>

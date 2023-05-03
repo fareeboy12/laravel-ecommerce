@@ -23,7 +23,7 @@
                     @foreach($order->orderItems as $key => $item)
                         <tr>
                             <th scope="row">{{ $key + 1 }}</th>
-                            <td><img src="{{ asset($item->product->thumbnail) }}" alt="{{ $item->product->title }}" width="100" class="img-fluid"></td>
+                            <td><img src="{{ asset('storage/' . $item->product->thumbnail) }}" alt="{{ $item->product->title }}" width="100" class="img-fluid"></td>
                             <td>{{ $item->product->title }}</td>
                             <td>{{ $item->quantity }}</td>
                             <td>${{ $item->quantity * $item->product->price }}</td>
