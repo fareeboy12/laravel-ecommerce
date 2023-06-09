@@ -1,11 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Support\Facades\Mail;
 
 use App\Models\Order;
 use Stripe\Stripe;
 use Stripe\Charge;
 use Illuminate\Http\Request;
+use App\Mail\OrderConfirmation;
 
 class PaymentController extends Controller
 {
@@ -33,14 +35,19 @@ class PaymentController extends Controller
                 'source' => $stripeToken,
                 'description' => 'Your description of the charge',
             ]);
+
+            // Update the payment status of the order
+            $order->payment_status = 'paid';
+            Mail::to($order->email)->send(new OrderConfirmation($order));
+
         } catch (\Exception $e) {
             // Handle any errors that occurred during the charge attempt
             // e.g., return an error message to the user
+            Mail::to($order->email)->send(new OrderConfirmation($order));
             return back()->withErrors('Error processing payment: ' . $e->getMessage());
         }
 
-        // Update the payment status of the order
-        $order->payment_status = 'paid';
+        
         $order->save();
 
         // Redirect to the "Thank you" page after a successful charge

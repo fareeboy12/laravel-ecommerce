@@ -76,7 +76,7 @@
                                             <div class="ratings">
                                                 <div class="ratings-val" style="width: 80%;"></div><!-- End .ratings-val -->
                                             </div><!-- End .ratings -->
-                                            <a class="ratings-text" href="#product-review-link" id="review-link">( 2 Reviews )</a>
+                                            <a class="ratings-text" href="#product-review-link" id="review-link">( {{$totalReviews}} Reviews )</a>
                                         </div><!-- End .rating-container -->
 
                                         <div class="product-price">
@@ -149,9 +149,12 @@
                                         <div class="product-details-footer">
                                             <div class="product-cat">
                                                 <span>Category:</span>
-                                                <a href="#">Women</a>,
-                                                <a href="#">Dresses</a>,
-                                                <a href="#">Yellow</a>
+                                                @foreach(explode(',', $product->category) as $category)
+                                                    <a href="#">{{ ucfirst(trim($category)) }}</a>
+                                                    @if (!$loop->last)
+                                                        ,
+                                                    @endif
+                                                @endforeach
                                             </div><!-- End .product-cat -->
 
                                             <div class="social-icons social-icons-sm">
@@ -179,7 +182,7 @@
                                 <a class="nav-link" id="product-shipping-link" data-toggle="tab" href="#product-shipping-tab" role="tab" aria-controls="product-shipping-tab" aria-selected="false">Shipping & Returns</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="product-review-link" data-toggle="tab" href="#product-review-tab" role="tab" aria-controls="product-review-tab" aria-selected="false">Reviews (2)</a>
+                                <a class="nav-link" id="product-review-link" data-toggle="tab" href="#product-review-tab" role="tab" aria-controls="product-review-tab" aria-selected="false">Reviews ({{$totalReviews}})</a>
                             </li>
                         </ul>
                         <div class="tab-content">
@@ -224,58 +227,74 @@
                             </div><!-- .End .tab-pane -->
                             <div class="tab-pane fade" id="product-review-tab" role="tabpanel" aria-labelledby="product-review-link">
                                 <div class="reviews">
-                                    <h3>Reviews (2)</h3>
-                                    <div class="review">
-                                        <div class="row no-gutters">
-                                            <div class="col-auto">
-                                                <h4><a href="#">Samanta J.</a></h4>
-                                                <div class="ratings-container">
-                                                    <div class="ratings">
-                                                        <div class="ratings-val" style="width: 80%;"></div><!-- End .ratings-val -->
-                                                    </div><!-- End .ratings -->
-                                                </div><!-- End .rating-container -->
-                                                <span class="review-date">6 days ago</span>
-                                            </div><!-- End .col -->
+                                    @foreach ($reviews as $review)
+                                        <div class="review">
+                                            <div class="row no-gutters">
+                                                <div class="col-12 col-sm-2">
+                                                    <h4><a href="#">{{ $review->user->first_name }} {{ $review->user->last_name }}</a></h4>
+                                                    <div class="ratings-container">
+                                                        <div class="ratings">
+                                                            <div class="ratings-val" style="width: {{ $review->star_rating * 20 }}%;"></div>
+                                                        </div>
+                                                    </div>
+                                                    <span class="review-date">{{ $review->created_at->diffForHumans() }}</span>
+                                                </div>
+                                                <div class="col-12 col-sm-10">
+                                                    <h4>{{ $review->review_title }}</h4>
+                                                    <div class="review-content">
+                                                        <p>{{ $review->review_description }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+
+                                    <!-- Check if user has ordered the product -->
+                                    @if ($hasOrdered)
+                                        <div class="row">
                                             <div class="col">
-                                                <h4>Good, perfect size</h4>
+                                                @if(Session::has('success'))
+                                                    <div class="alert alert-success mb-3">{{ Session::get('success') }}</div>
+                                                @endif
+                                                <h3>Share your Reviews about this product</h3>
+                                                <!-- Add your review form HTML code here -->
+                                                <form action="{{ route('reviews.store', ['product_id' => $product->id]) }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                                    <div class="row justify-content-center">
+                                                        <div class="col-12 col-sm-6">
+                                                            <div class="form-group">
+                                                                <label for="review-title">Review Title</label>
+                                                                <input type="text" name="review_title" id="review-title" class="form-control" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-sm-6">
+                                                            <div class="form-group">
+                                                                <label for="star-rating">Star Rating</label>
+                                                                <select name="star_rating" id="star-rating" class="form-control" required>
+                                                                    <option value="1">1 Star</option>
+                                                                    <option value="2">2 Stars</option>
+                                                                    <option value="3">3 Stars</option>
+                                                                    <option value="4">4 Stars</option>
+                                                                    <option value="5">5 Stars</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <div class="form-group">
+                                                                <label for="review-description">Review Description</label>
+                                                                <textarea name="review_description" id="review-description" class="form-control" required></textarea>
+                                                            </div>
+                                                        </div>
 
-                                                <div class="review-content">
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ducimus cum dolores assumenda asperiores facilis porro reprehenderit animi culpa atque blanditiis commodi perspiciatis doloremque, possimus, explicabo, autem fugit beatae quae voluptas!</p>
-                                                </div><!-- End .review-content -->
-
-                                                <div class="review-action">
-                                                    <a href="#"><i class="icon-thumbs-up"></i>Helpful (2)</a>
-                                                    <a href="#"><i class="icon-thumbs-down"></i>Unhelpful (0)</a>
-                                                </div><!-- End .review-action -->
-                                            </div><!-- End .col-auto -->
-                                        </div><!-- End .row -->
-                                    </div><!-- End .review -->
-
-                                    <div class="review">
-                                        <div class="row no-gutters">
-                                            <div class="col-auto">
-                                                <h4><a href="#">John Doe</a></h4>
-                                                <div class="ratings-container">
-                                                    <div class="ratings">
-                                                        <div class="ratings-val" style="width: 100%;"></div><!-- End .ratings-val -->
-                                                    </div><!-- End .ratings -->
-                                                </div><!-- End .rating-container -->
-                                                <span class="review-date">5 days ago</span>
+                                                        <div class="col-12">
+                                                            <button type="submit" class="btn btn-primary">Submit Review</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
                                             </div><!-- End .col -->
-                                            <div class="col">
-                                                <h4>Very good</h4>
-
-                                                <div class="review-content">
-                                                    <p>Sed, molestias, tempore? Ex dolor esse iure hic veniam laborum blanditiis laudantium iste amet. Cum non voluptate eos enim, ab cumque nam, modi, quas iure illum repellendus, blanditiis perspiciatis beatae!</p>
-                                                </div><!-- End .review-content -->
-
-                                                <div class="review-action">
-                                                    <a href="#"><i class="icon-thumbs-up"></i>Helpful (0)</a>
-                                                    <a href="#"><i class="icon-thumbs-down"></i>Unhelpful (0)</a>
-                                                </div><!-- End .review-action -->
-                                            </div><!-- End .col-auto -->
                                         </div><!-- End .row -->
-                                    </div><!-- End .review -->
+                                    @endif
                                 </div><!-- End .reviews -->
                             </div><!-- .End .tab-pane -->
                         </div><!-- End .tab-content -->

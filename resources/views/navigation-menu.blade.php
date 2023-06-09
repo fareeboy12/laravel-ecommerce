@@ -6,9 +6,15 @@
 
     <div class="collapse navbar-collapse w-100" id="navbarSupportedContent">
       <ul class="navbar-nav my-2 my-lg-0 w-100 ml-5">
+
         <li class="nav-item">
             <a class="nav-link" href="{{ route('dashboard') }}">Dashboard <span class="sr-only">(current)</span></a>
         </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('manage-products') }}">Manage Products</a>
+        </li>
+
         <li class="nav-item">
             <a class="nav-link" href="{{ route('add-new-product') }}">Add New Product</a>
         </li>

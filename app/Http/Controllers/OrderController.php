@@ -3,10 +3,21 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
 
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Repositories\CartRepository;
+use App\Http\Controllers\PaymentController;
+use Stripe\Stripe;
+use App\Mail\OrderConfirmation;
+
+use GuzzleHttp\Client as GuzzleHttpClient;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Log;
+use Twilio\Rest\Client as TwilioClient;
+
+
 
 
 class OrderController extends Controller
@@ -65,6 +76,69 @@ class OrderController extends Controller
             // Redirect to the payment page
             return redirect()->route('payment.show', $order->id);
         }
+
+        Mail::to($order->email)->send(new OrderConfirmation($order));
+
+
+        $guzzleClient = new GuzzleHttpClient();
+
+        $response = $guzzleClient->post('https://graph.facebook.com/v16.0/104907332408432/messages', [
+            'headers' => [
+                'Authorization' => 'Bearer EAAKzV83BxhIBAO4CQcdU4q1CzwdPM1UCOUCOiUZAhmZCvJUOaCFzDWpYyhh8KuoAkjYbl8ZALHRLacIu88oQ2ZAr5TFJ04olkUbSZBwZCe8U06AEckTKcR0LipZCz1Pqt7hCnkpEdpcoM5nEz3CsTZBshqBfCkH0ioRrH6bnZBTAhZCahpXvzXNQyQZBuKKFDrlWYr2Oo9L8H8yPL2MPp7vwPJ0QwK3beBMt9UZD',
+                'Content-Type' => 'application/json',
+            ],
+            'json' => [
+                'messaging_product' => 'whatsapp',
+                'to' => $order->phone,
+                'type' => 'template',
+                'template' => [
+                    'name' => 'laravel_ecommerce',
+                    'language' => [
+                        'code' => 'en_US',
+                    ],
+                    'components' => [
+                        [
+                            'type' => 'body',
+                            'parameters' => [
+                                [
+                                    'type' => 'text',
+                                    'text' => $order->first_name,
+                                ],
+                                [
+                                    'type' => 'text',
+                                    'text' => $order->last_name,
+                                ],
+                                [
+                                    'type' => 'text',
+                                    'text' => $order->order_number,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        $statusCode = $response->getStatusCode();
+        $responseData = json_decode($response->getBody(), true);
+
+        // Send SMS notification
+        $twilioAccountSid = Config::get('app.TWILIO_ACCOUNT_SID');
+        $twilioAuthToken = Config::get('app.TWILIO_AUTH_TOKEN');
+        $twilioPhoneNumber = '+12545565156';
+
+        $twilioClient = new TwilioClient($twilioAccountSid, $twilioAuthToken);
+        $twilioClient->messages->create(
+            $order->phone, // recipient's phone number
+            [
+                'from' => $twilioPhoneNumber,
+                'body' => 'Your Order number #' . $order->order_number . ' has been confirmed. Thank you!',
+            ]
+        );
+
+        // Delete cart data for the user
+        $this->cartRepository->deleteCart(auth()->id());
+        
         return redirect()->route('order.thankyou', $order->id);
     }
 
@@ -113,8 +187,4 @@ class OrderController extends Controller
     
         return response()->json(['message' => 'Order status updated successfully.']);
     }
-    
-
-
-
 }

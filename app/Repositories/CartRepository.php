@@ -35,4 +35,9 @@ class CartRepository
             'totalPrice' => $totalPrice,
         ];
     }
+
+    public function deleteCart($userId)
+    {
+        Cart::where('user_id', $userId)->delete();
+    }
 }

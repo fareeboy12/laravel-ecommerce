@@ -3,6 +3,7 @@
 @section('title', 'Add New Product')
 
 @section('content')
+<div class="container">
     <div class="row justify-content-center">
         <div class="col-12 mt-5">
             <form method="POST" action="{{ route('product.store') }}" enctype="multipart/form-data">
@@ -122,4 +123,5 @@
             </form>
         </div>
     </div>
+</div>
 @endsection

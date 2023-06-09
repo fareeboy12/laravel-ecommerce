@@ -26,10 +26,12 @@
         <link rel="stylesheet" href="/assets/css/plugins/owl-carousel/owl.carousel.css">
         <link rel="stylesheet" href="/assets/css/plugins/magnific-popup/magnific-popup.css">
         <link rel="stylesheet" href="/assets/css/plugins/jquery.countdown.css">
-        <link rel="stylesheet" href="/assets/css/style.css">
-        <link rel="stylesheet" href="/assets/css/skins/skin-demo-2.css">
+        <!-- <link rel="stylesheet" href="/assets/css/style.css"> -->
+        <!-- <link rel="stylesheet" href="/assets/css/skins/skin-demo-2.css"> -->
         <link rel="stylesheet" href="/assets/css/demos/demo-2.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.40.0/apexcharts.min.css" integrity="sha512-tJYqW5NWrT0JEkWYxrI4IK2jvT7PAiOwElIGTjALSyr8ZrilUQf+gjw2z6woWGSZqeXASyBXUr+WbtqiQgxUYg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap4.min.css">
 
         <style>
     .edit-input {
@@ -56,26 +58,31 @@
                 </header>
             @endif
 
-            <main class="container">
+            <main>
                 @yield('content')
             </main>
         </div>
 
         @stack('modals')
 
-    <script src="/assets/js/jquery.min.js"></script>
+        <!-- <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script> -->
+    
+    <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.40.0/apexcharts.min.js" integrity="sha512-Kr1p/vGF2i84dZQTkoYZ2do8xHRaiqIa7ysnDugwoOcG0SbIx98erNekP/qms/hBDiBxj336//77d0dv53Jmew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" integrity="sha512-fD9DI5bZwQxOi7MhYWnnNPlvXdp/2Pj3XSTRrFs5FQa4mizyGLnJcN6tuvUS6LbmgN1ut+XGSABKvjN0H6Aoow==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.js"></script>
-    <script src="/assets/js/jquery.hoverIntent.min.js"></script>
-    <script src="/assets/js/jquery.waypoints.min.js"></script>
-    <script src="/assets/js/superfish.min.js"></script>
-    <script src="/assets/js/owl.carousel.min.js"></script>
-    <script src="/assets/js/jquery.plugin.min.js"></script>
-    <script src="/assets/js/jquery.magnific-popup.min.js"></script>
-    <script src="/assets/js/jquery.countdown.min.js"></script>
-    <script src="/assets/js/main.js"></script>
-    <script src="/assets/js/demos/demo-2.js"></script>
+    <script src="{{ asset('assets/js/jquery.hoverIntent.min.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery.waypoints.min.js') }}"></script>
+    <script src="{{ asset('assets/js/superfish.min.js') }}"></script>
+    <script src="{{ asset('assets/js/owl.carousel.min.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery.plugin.min.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery.magnific-popup.min.js') }}"></script>
+    <script src="{{ asset('assets/js/jquery.countdown.min.js') }}"></script>
+    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap4.min.js"></script>
+    <script src="{{ asset('assets/js/main.js') }}"></script>
+    <script src="{{ asset('assets/js/demos/demo-2.js') }}"></script>
     <script>
         var product_categories = new Choices('#product_category', {
             removeItemButton: true,
@@ -170,130 +177,213 @@
       }
     </script>
 
-<script>
+    <script>
 
-    async function fetchCoupons() {
-      try {
-            const response = await fetch("{{ route('coupons.index') }}");
-            const coupons = await response.json();
-
-            let tableRows = '';
-
-            coupons.forEach((coupon, index) => {
-                tableRows += `
-                    <tr data-id="${coupon.id}">
-                        <th scope="row" class="p-2">${index + 1}</th>
-                        <td class="p-2">
-                            <input type="text" name="coupon_code" value="${coupon.coupon_code}" class="form-control m-0 edit-input" disabled>
-                        </td>
-                        <td class="p-2">
-                            <input type="number" name="coupon_price" value="${coupon.coupon_price}" class="form-control m-0 edit-input" disabled>
-                        </td>
-                        <td class="p-2">
-                            <button type="button" class="btn-edit">
-                                <i class="icon-edit"></i>
-                            </button>
-                            <button type="button" class="btn-save" style="display: none;">
-                              <i class="far fa-save"></i>
-                            </button>
-                        </td>
-                        <td class="p-2">
-                            <form action="{{ route('coupons.destroy', '') }}/${coupon.id}" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn-remove">
-                                    <i class="icon-close"></i>
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                `;
-            });
-
-            const tableBody = document.querySelector("#coupons > tbody");
-            tableBody.innerHTML = tableRows;
-
-            // Reattach event listeners to the edit buttons
-            attachEditButtonListeners();
-
-        } catch (error) {
-            console.error("Error fetching coupons:", error);
-        }
-    }
-
-    function attachEditButtonListeners() {
-      const editButtons = document.querySelectorAll('.btn-edit');
-      const saveButtons = document.querySelectorAll('.btn-save');
-
-      editButtons.forEach((btn, index) => {
-        btn.addEventListener('click', (e) => {
-          e.preventDefault();
-          const row = btn.closest('tr');
-          const inputs = row.querySelectorAll('.edit-input');
-
-          inputs.forEach(input => {
-            input.removeAttribute('disabled');
-            input.classList.add('editing');
-          });
-
-          btn.style.display = 'none';
-          saveButtons[index].style.display = 'inline-block';
-        });
-      });
-
-      saveButtons.forEach((btn, index) => {
-        btn.addEventListener('click', async (e) => {
-          e.preventDefault();
-          const row = btn.closest('tr');
-          const inputs = row.querySelectorAll('.edit-input');
-          const id = row.getAttribute('data-id');
-
-          inputs.forEach(input => {
-            input.setAttribute('disabled', '');
-            input.classList.remove('editing');
-          });
-
-          const couponCode = row.querySelector('input[name="coupon_code"]').value;
-          const couponPrice = row.querySelector('input[name="coupon_price"]').value;
-
+        async function fetchCoupons() {
           try {
-            const response = await fetch(`{{ url('/coupons/') }}/${id}`, {
-              method: 'PUT',
-              headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': "{{ csrf_token() }}",
-              },
-              body: JSON.stringify({
-                coupon_code: couponCode,
-                coupon_price: couponPrice,
-              }),
-            });
+                const response = await fetch("{{ route('coupons.index') }}");
+                const coupons = await response.json();
 
-            const data = await response.json();
+                let tableRows = '';
 
-            if (data.success) {
-              console.log(data.success);
-              fetchCoupons();
-            } else {
-              console.error('Error updating coupon');
+                coupons.forEach((coupon, index) => {
+                    tableRows += `
+                        <tr data-id="${coupon.id}">
+                            <th scope="row" class="p-2 align-middle">${index + 1}</th>
+                            <td class="p-2 align-middle">
+                                <input type="text" name="coupon_code" value="${coupon.coupon_code}" class="form-control m-0 edit-input" disabled>
+                            </td>
+                            <td class="p-2 align-middle">
+                                <input type="number" name="coupon_price" value="${coupon.coupon_price}" class="form-control m-0 edit-input" disabled>
+                            </td>
+                            <td class="p-2 align-middle">
+                                <button type="button" class="btn-edit" style="background-color: #fff;border: none;">
+                                  <i class="fa-solid fa-pen-to-square"></i>
+                                </button>
+                                <button type="button" class="btn-save" style="display: none; background-color: #fff;border: none;">
+                                  <i class="fa-solid fa-floppy-disk"></i>
+                                </button>
+                            </td>
+                            <td class="p-2 align-middle">
+                                <form action="{{ route('coupons.destroy', '') }}/${coupon.id}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn-remove" style="background-color: #fff;border: none;">
+                                      <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                const tableBody = document.querySelector("#coupons > tbody");
+                tableBody.innerHTML = tableRows;
+
+                // Reattach event listeners to the edit buttons
+                attachEditButtonListeners();
+
+            } catch (error) {
+                console.error("Error fetching coupons:", error);
             }
-          } catch (error) {
-            console.error('Error updating coupon:', error);
-          }
+        }
 
-          // Hide save button and display edit button again
-          btn.style.display = 'none';
-          editButtons[index].style.display = 'inline-block';
+        function attachEditButtonListeners() {
+          const editButtons = document.querySelectorAll('.btn-edit');
+          const saveButtons = document.querySelectorAll('.btn-save');
+
+          editButtons.forEach((btn, index) => {
+            btn.addEventListener('click', (e) => {
+              e.preventDefault();
+              const row = btn.closest('tr');
+              const inputs = row.querySelectorAll('.edit-input');
+
+              inputs.forEach(input => {
+                input.removeAttribute('disabled');
+                input.classList.add('editing');
+              });
+
+              btn.style.display = 'none';
+              saveButtons[index].style.display = 'inline-block';
+            });
+          });
+
+          saveButtons.forEach((btn, index) => {
+            btn.addEventListener('click', async (e) => {
+              e.preventDefault();
+              const row = btn.closest('tr');
+              const inputs = row.querySelectorAll('.edit-input');
+              const id = row.getAttribute('data-id');
+
+              inputs.forEach(input => {
+                input.setAttribute('disabled', '');
+                input.classList.remove('editing');
+              });
+
+              const couponCode = row.querySelector('input[name="coupon_code"]').value;
+              const couponPrice = row.querySelector('input[name="coupon_price"]').value;
+
+              try {
+                const response = await fetch(`{{ url('/coupons/') }}/${id}`, {
+                  method: 'PUT',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                  },
+                  body: JSON.stringify({
+                    coupon_code: couponCode,
+                    coupon_price: couponPrice,
+                  }),
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                  console.log(data.success);
+                  fetchCoupons();
+                } else {
+                  console.error('Error updating coupon');
+                }
+              } catch (error) {
+                console.error('Error updating coupon:', error);
+              }
+
+              // Hide save button and display edit button again
+              btn.style.display = 'none';
+              editButtons[index].style.display = 'inline-block';
+            });
+          });
+        }
+
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+          fetchCoupons();
         });
-      });
-    }
+    </script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+
+            // Extract the dates and sales values from the data
+            const dates = chartData.map(data => data.date);
+            const sales = chartData.map(data => parseFloat(data.sales));
+
+            console.log(sales)
+
+            // Create the chart options
+            const saleAnalyticsOptions = {
+                chart: {
+                    type: 'area',
+                    stacked: true,
+                    height: 350,
+                    width: '100%',
+                },
+                series: [{
+                    name: 'Total Sales',
+                    data: sales,
+                }],
+                xaxis: {
+                    type: 'datetime',
+                    categories: dates,
+                },
+                brush: {
+                    enabled: true,
+                    target: 'salesAnalytics',
+                },
+                dataLabels: {
+                    enabled: false,
+                },
+                responsive: [{
+                    breakpoint: 480,
+                    options: {
+                        chart: {
+                            height: 300,
+                        },
+                    },
+                }],
+            };
 
 
 
-    document.addEventListener('DOMContentLoaded', () => {
-      fetchCoupons();
-    });
-</script>
+
+            // Extract the dates and orders values from the data
+            const orderDates = chartData.map(data => data.date);
+            const orders = chartData.map(data => data.orders);
+
+            // Create the chart options
+            const orderAnalyticsOptions = {
+                chart: {
+                    type: 'bar',
+                    height: 350,
+                    width: '100%',
+                },
+                series: [{
+                    name: 'Number of Orders',
+                    data: orders,
+                }],
+                xaxis: {
+                    categories: orderDates,
+                },
+                responsive: [{
+                    breakpoint: 480,
+                    options: {
+                        chart: {
+                            height: 300,
+                        },
+                    },
+                }],
+            };
+
+
+            // Create and render the chart
+            const orderAnalyticsChart = new ApexCharts(document.querySelector('#orderAnalytics'), orderAnalyticsOptions);
+            orderAnalyticsChart.render();
+
+            const salesAnalyticsChart = new ApexCharts(document.querySelector('#salesAnalytics'), saleAnalyticsOptions);
+            salesAnalyticsChart.render();
+        });
+    </script>
 
     <style>
       .upload__inputfile {

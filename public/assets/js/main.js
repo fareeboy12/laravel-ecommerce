@@ -2,13 +2,38 @@
 $(document).ready(function () {
     'use strict';
 
+    $('#manageProducts').DataTable({
+        ordering: true,
+        "autoWidth": true
+    } );
+
+    $('#orders-table').DataTable();
+    $('#all-users').DataTable();
+    $('#order-details').DataTable();
+
 
 		//Redirect Orders Page to Single Order page
-        $('#orders-table tbody tr td[data-url]').on('click', function() {
+        $('body').on('click', '#orders-table td[data-url]', function() {
             var url = $(this).data('url');
             if (url) {
                 window.location.href = url;
             }
+        });
+
+        var categories = new Choices('#categories', {
+            removeItemButton: true,
+        });
+
+        var brands = new Choices('#brands', {
+            removeItemButton: true,
+        });
+
+        var upsellitems = new Choices('#upsell-items', {
+            removeItemButton: true,
+        });
+
+        var crosssellitems = new Choices('#cross-sell-items', {
+            removeItemButton: true,
         });
         
         // Change Order Status for Admin Panel

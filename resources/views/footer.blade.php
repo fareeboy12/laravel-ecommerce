@@ -439,7 +439,7 @@
                                     </div><!-- End .form-choice -->
                                 </div><!-- .End .tab-pane -->
                                 <div class="tab-pane fade" id="register" role="tabpanel" aria-labelledby="register-tab">
-                                    <form method="POST" action="{{ route('register') }}">
+                                    <form method="POST" action="{{ route('signup.submit') }}">
                                     @csrf
                                         <div class="form-group">
                                             <label for="first_name">First Name *</label>

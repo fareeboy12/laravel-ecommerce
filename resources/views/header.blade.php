@@ -117,7 +117,7 @@
 
             <div class="header-right">
                 <div class="account">
-                    <a href="dashboard.html" title="My account">
+                    <a href="{{ route('accounts.index') }}" title="My account">
                         <div class="icon">
                             <i class="icon-user"></i>
                         </div>
@@ -129,7 +129,7 @@
                     <a href="{{ route('wishlists.index') }}" title="Wishlist">
                         <div class="icon">
                             <i class="icon-heart-o"></i>
-                            <span class="wishlist-count badge">3</span>
+                            <span class="wishlist-count badge">{{ $wishlistCount }}</span>
                         </div>
                         <p>Wishlist</p>
                     </a>

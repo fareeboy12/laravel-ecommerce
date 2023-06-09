@@ -4,10 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Products;
 use App\Models\Wishlist;
+use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\Reviews;
 use App\Jobs\ProcessCsvUpload;
 use App\Events\ProductsUploadCompleted;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Category;
+use App\Models\Brand;
+
 
 class ProductsController extends Controller
 {
@@ -19,8 +25,34 @@ class ProductsController extends Controller
         $products = Products::paginate(10);
         return view('products', compact('products'));
     }
-    
 
+    public function manageProducts()
+    {
+        $products = Products::get();
+        return view('layouts.manage-products', compact('products'));
+    }
+
+    public function updateProducts($slug)
+    {
+        $product = Products::where('slug', $slug)->first();
+    
+        if (!$product) {
+            // Handle the case when the product is not found, e.g., return a 404 response
+            abort(404);
+        }
+    
+        // Get the category ids and brand ids as arrays
+        $categoryIds = explode(',', $product->category_ids);
+        $brandIds = explode(',', $product->brand_ids);
+    
+        // Retrieve all categories and brands
+        $allCategories = Category::all();
+        $allBrands = Brand::all();
+    
+        return view('layouts.update-product', compact('product', 'allCategories', 'allBrands', 'categoryIds', 'brandIds'));
+    }
+    
+    
     public function getSpecificProduct($slug)
     {
         $product = Products::where('slug', $slug)->first();
@@ -32,12 +64,28 @@ class ProductsController extends Controller
     
         $user = Auth::user();
         $wishlist = null;
+        $hasOrdered = false;
     
         if ($user) {
             $wishlist = Wishlist::where('user_id', $user->id)->where('product_id', $product->id)->first();
-        }
     
-        return view('single-product', compact('product', 'wishlist'));
+            // Check if the user has ordered the product
+            $order = Order::where('user_id', $user->id)->whereHas('orderItems', function ($query) use ($product) {
+                $query->where('product_id', $product->id);
+            })->first();
+    
+            if ($order) {
+                $hasOrdered = true;
+            }
+        }
+
+        // Fetch reviews for the product
+        $reviews = Reviews::where('product_id', $product->id)->get();
+
+        // Count total reviews for the product
+        $totalReviews = $reviews->count();
+    
+        return view('single-product', compact('product', 'wishlist', 'hasOrdered', 'reviews', 'totalReviews'));
     }
 
     public function showBulkUploadForm()
@@ -45,23 +93,28 @@ class ProductsController extends Controller
         return view('csv-upload-products');
     }
 
-
     public function uploadCsv(Request $request)
     {
         $request->validate([
             'csv_file' => 'required|mimes:csv,txt|max:2048',
         ]);
-    
+        
+
         $csvFile = $request->file('csv_file');
-        $storedFilePath = $csvFile->store('csv_uploads'); // Store the file in the 'storage/app/csv_uploads' directory
-    
-        ProcessCsvUpload::dispatch($storedFilePath);
-    
+        $filePath = $csvFile->store('csv_uploads');
+
+        $numRecords = count(file($csvFile));
+        $chunkSize = 100; // set the number of records to process in each chunk
+
+        for ($start = 0; $start < $numRecords; $start += $chunkSize) {
+            $end = $start + $chunkSize - 1;
+            $job = new ProcessCsvUpload($filePath, $start, $end);
+            // dispatch($job);
+            dispatch($job->onQueue('csv-processing'));
+        }
+
         return back()->with('success', 'CSV file uploaded and processing started.');
     }
-    
-    
-
 
     /**
      * Show the form for creating a new resource.

@@ -71,6 +71,13 @@ return [
             'after_commit' => false,
         ],
 
+        'database-csv' => [
+            'driver' => 'database',
+            'table' => 'jobs',
+            'queue' => 'csv-processing',
+            'retry_after' => 60, //60 seconds = 1 minute
+        ],
+
     ],
 
     /*

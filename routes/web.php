@@ -10,6 +10,8 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ReviewsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -62,6 +64,7 @@ Route::get('/thankyou/{order}', [OrderController::class, 'thankyou'])->name('ord
 Route::get('/payment/{order}', [PaymentController::class, 'show'])->name('payment.show');
 Route::post('/payment/{order}', [PaymentController::class, 'store'])->name('payment.store');
 
+Route::post('/signup', [AuthController::class, 'signup'])->name('signup.submit');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -70,10 +73,19 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/wishlists', [WishlistController::class, 'index'])->name('wishlists.index');
     Route::post('/wishlists', [WishlistController::class, 'store'])->name('wishlists.store');
     Route::delete('/wishlists/{wishlist}', [WishlistController::class, 'destroy'])->name('wishlists.destroy');
+
+    Route::get('/dashboard', [])->name('dashboard.index');
+    Route::get('/accounts', [DashboardController::class, 'index'])->name('accounts.index');
+
+    Route::put('/users/{user}', [UserController::class, 'update'])->name('user.update');
+    // Route::post('products/{productId}/reviews', [ReviewsController::class, 'create'])->name('reviews.create');
+    Route::post('/reviews/create/{product_id}', [ReviewsController::class, 'store'])->name('reviews.store');
 });
 
 
-Route::middleware(['user_type'])->group(function () {
+//FOR ADMIN PANEL
+Route::middleware(['auth', 'userType'])->group(function () {
+    // Route::get('/get-statistics', [DashboardController::class, 'getStatistics'])->name('get-statistics');
     Route::get('/upload-products', [ProductsController::class, 'showBulkUploadForm'])->name('upload-products');
     Route::post('/products/upload', [ProductsController::class, 'uploadCsv'])->name('products.upload');
     Route::post('/coupons', [CouponsController::class, 'store'])->name('coupons.store');
@@ -95,5 +107,11 @@ Route::middleware(['user_type'])->group(function () {
         return view('dashboard');
     })->name('dashboard');
 
+    Route::get('/dashboard', [DashboardController::class, 'getStatistics'])->name('dashboard');
+
     Route::get('/cart/details', [CartController::class, 'showCartDetails'])->name('cart.details');
+
+    Route::get('/manage-products', [ProductsController::class, 'manageProducts'])->name('manage-products');
+    Route::get('/update-product/{slug}', [ProductsController::class, 'updateProducts'])->name('update-product');
+
 });
